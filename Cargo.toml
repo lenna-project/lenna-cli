@@ -7,6 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+libloading = "0.5"
 structopt = "0.3.13"
 lenna-core = {version = "0.1", path="../lenna-core"}
 image = { version = "0.23.12", default-features = false, features = ["png"] }
