@@ -1,0 +1,14 @@
+[package]
+name = "lenna-cli"
+version = "0.1.0"
+authors = ["Christian <chriamue@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+structopt = "0.3.13"
+lenna-core = {version = "0.1", path="../lenna-core"}
+image = { version = "0.23.12", default-features = false, features = ["png"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0.8"

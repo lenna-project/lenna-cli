@@ -1,0 +1,4 @@
+pipeline:
+  - id: resize
+    width: 250
+    height: 250
