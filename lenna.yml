@@ -2,5 +2,8 @@ pipeline:
   - id: resize
     width: 500
     height: 500
+  - id: canny
+    low: 50.0
+    high: 100.0
   - id: blur
     sigma: 1.5
