@@ -1,4 +1,3 @@
-use lenna_core::plugins;
 use lenna_core::plugins::PluginDeclaration;
 use lenna_core::Pool;
 use libloading::Library;
@@ -15,16 +14,28 @@ impl Plugins {
     }
 
     pub fn load_plugins(&mut self, pool: &mut Pool, plugins_path: &PathBuf) {
+        let extensions = ["so", "dll", "dylib"];
         let paths = fs::read_dir(plugins_path).unwrap();
 
         for library_path in paths {
-            unsafe {
-                self.load(pool, library_path.unwrap().path());
+            let file = library_path.unwrap().path();
+            let extension = &file.extension();
+            if extensions.contains(&extension.unwrap().to_str().unwrap()) {
+                unsafe {
+                    match self.load(pool, file) {
+                        Ok(_) => (),
+                        Err(e) => println!("{:?}", e),
+                    }
+                }
             }
         }
     }
 
-    pub unsafe fn load<P: AsRef<OsStr>>(&mut self, pool: &mut Pool, library_path: P) -> io::Result<()> {
+    pub unsafe fn load<P: AsRef<OsStr>>(
+        &mut self,
+        pool: &mut Pool,
+        library_path: P,
+    ) -> io::Result<()> {
         // load the library into memory
         let library = Rc::new(Library::new(library_path)?);
 
