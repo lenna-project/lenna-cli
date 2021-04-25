@@ -1,10 +1,69 @@
+use image::DynamicImage;
 use lenna_core::plugins::PluginDeclaration;
-use lenna_core::Pool;
+use lenna_core::{Pool, Processor, ProcessorConfig};
 use libloading::Library;
 use std::{ffi::OsStr, fs, io, path::PathBuf, rc::Rc};
 
+#[derive(Clone)]
+pub struct PluginProxy {
+    processor: Box<dyn Processor>,
+    _lib: Rc<Library>,
+}
+
+impl Processor for PluginProxy {
+    fn id(&self) -> String {
+        self.processor.id()
+    }
+    fn name(&self) -> String {
+        self.processor.name()
+    }
+    fn title(&self) -> String {
+        self.processor.title()
+    }
+    fn version(&self) -> String {
+        self.processor.version()
+    }
+    fn author(&self) -> String {
+        self.processor.author()
+    }
+    fn description(&self) -> String {
+        self.processor.description()
+    }
+    fn process(&self, config: ProcessorConfig, image: DynamicImage) -> DynamicImage {
+        self.processor.process(config, image)
+    }
+    fn default_config(&self) -> serde_json::Value {
+        self.processor.default_config()
+    }
+}
+
+struct PluginRegistrar {
+    plugins: Vec<PluginProxy>,
+    lib: Rc<Library>,
+}
+
+impl PluginRegistrar {
+    fn new(lib: Rc<Library>) -> PluginRegistrar {
+        PluginRegistrar {
+            lib,
+            plugins: Vec::default(),
+        }
+    }
+}
+
+impl lenna_core::plugins::PluginRegistrar for PluginRegistrar {
+    fn add_plugin(&mut self, processor: Box<dyn Processor>) {
+        let proxy = PluginProxy {
+            processor,
+            _lib: Rc::clone(&self.lib),
+        };
+        self.plugins.push(proxy);
+    }
+}
+
 #[derive(Default)]
 pub struct Plugins {
+    pub pool: Pool,
     libraries: Vec<Rc<Library>>,
 }
 
@@ -13,7 +72,7 @@ impl Plugins {
         Plugins::default()
     }
 
-    pub fn load_plugins(&mut self, pool: &mut Pool, plugins_path: &PathBuf) {
+    pub fn load_plugins(&mut self, plugins_path: &PathBuf) {
         let extensions = ["so", "dll", "dylib"];
         let paths = fs::read_dir(plugins_path).unwrap();
 
@@ -22,7 +81,7 @@ impl Plugins {
             let extension = &file.extension();
             if extensions.contains(&extension.unwrap().to_str().unwrap()) {
                 unsafe {
-                    match self.load(pool, file) {
+                    match self.load(file) {
                         Ok(_) => (),
                         Err(e) => println!("{:?}", e),
                     }
@@ -33,7 +92,6 @@ impl Plugins {
 
     pub unsafe fn load<P: AsRef<OsStr>>(
         &mut self,
-        pool: &mut Pool,
         library_path: P,
     ) -> io::Result<()> {
         // load the library into memory
@@ -51,7 +109,14 @@ impl Plugins {
             return Err(io::Error::new(io::ErrorKind::Other, "Version mismatch"));
         }
 
-        (decl.register)(pool);
+        let mut registrar = PluginRegistrar::new(Rc::clone(&library));
+
+        (decl.register)(&mut registrar);
+
+        let plugin = registrar.plugins.swap_remove(0);
+        self.pool.add(Box::new(plugin));
+
+        //self.plugins.extend(registrar.plugins);
         self.libraries.push(library);
         Ok(())
     }

@@ -1,5 +1,5 @@
 use image::io::Reader as ImageReader;
-use lenna_core::{Config, Pipeline, Pool};
+use lenna_core::{Config, Pipeline};
 use structopt::StructOpt;
 
 mod plugins;
@@ -40,15 +40,14 @@ fn main() {
     let args = Cli::from_args();
     let config_file = std::fs::File::open(&args.config).unwrap();
     let config: Config = serde_yaml::from_reader(config_file).unwrap();
-    let mut pool = Pool::default();
     let mut plugins = plugins::Plugins::new();
-    plugins.load_plugins(&mut pool, &args.plugins);
+    plugins.load_plugins(&args.plugins);
 
     if args.list_plugins {
-        for plugin_id in pool.ids() {
+        for plugin_id in plugins.pool.ids() {
             println!("{}", plugin_id);
             if args.verbose {
-                match pool.get(&plugin_id) {
+                match plugins.pool.get(&plugin_id) {
                     Some(plugin) => println!("\t{}\n", plugin.description()),
                     _ => (),
                 }
@@ -60,7 +59,7 @@ fn main() {
             .decode()
             .unwrap();
 
-        let pipeline = Pipeline::new(config, pool);
+        let pipeline = Pipeline::new(config, plugins.pool);
         img = pipeline.run(img);
         img.save(&args.out_path).unwrap();
     }

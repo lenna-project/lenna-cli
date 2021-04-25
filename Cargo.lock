@@ -173,6 +173,7 @@ dependencies = [
  "lenna_core",
  "libloading",
  "serde",
+ "serde_json",
  "serde_yaml",
  "structopt",
 ]
