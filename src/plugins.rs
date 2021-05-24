@@ -1,6 +1,5 @@
-use image::DynamicImage;
 use lenna_core::plugins::PluginDeclaration;
-use lenna_core::{Pool, Processor, ProcessorConfig};
+use lenna_core::{ExifProcessor, ImageProcessor, Pool, Processor, ProcessorConfig};
 use libloading::Library;
 use std::{ffi::OsStr, fs, io, path::PathBuf, rc::Rc};
 
@@ -9,6 +8,9 @@ pub struct PluginProxy {
     processor: Box<dyn Processor>,
     _lib: Rc<Library>,
 }
+
+impl ImageProcessor for PluginProxy {}
+impl ExifProcessor for PluginProxy {}
 
 impl Processor for PluginProxy {
     fn id(&self) -> String {
@@ -29,9 +31,15 @@ impl Processor for PluginProxy {
     fn description(&self) -> String {
         self.processor.description()
     }
-    fn process(&self, config: ProcessorConfig, image: DynamicImage) -> DynamicImage {
+
+    fn process(
+        &mut self,
+        config: ProcessorConfig,
+        image: &mut Box<lenna_core::LennaImage>,
+    ) -> Result<(), Box<dyn std::error::Error>> {
         self.processor.process(config, image)
     }
+
     fn default_config(&self) -> serde_json::Value {
         self.processor.default_config()
     }
@@ -90,10 +98,7 @@ impl Plugins {
         }
     }
 
-    pub unsafe fn load<P: AsRef<OsStr>>(
-        &mut self,
-        library_path: P,
-    ) -> io::Result<()> {
+    pub unsafe fn load<P: AsRef<OsStr>>(&mut self, library_path: P) -> io::Result<()> {
         // load the library into memory
         let library = Rc::new(Library::new(library_path)?);
 

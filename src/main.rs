@@ -1,4 +1,3 @@
-use image::io::Reader as ImageReader;
 use lenna_core::{Config, Pipeline};
 use structopt::StructOpt;
 
@@ -54,13 +53,39 @@ fn main() {
             }
         }
     } else {
-        let mut img = ImageReader::open(&args.path.unwrap())
-            .unwrap()
-            .decode()
-            .unwrap();
+        let path = &args.path.unwrap();
+        let mut img = Box::new(
+            lenna_core::io::read::read_from_file(path.to_str().unwrap().to_string()).unwrap(),
+        );
 
         let pipeline = Pipeline::new(config, plugins.pool);
-        img = pipeline.run(img);
-        img.save(&args.out_path).unwrap();
+        pipeline.run(&mut img).unwrap();
+
+        let out_path = args.out_path.to_str().unwrap().to_string();
+        match args.out_path.is_dir() {
+            true => {
+                img.path = out_path;
+                lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Jpeg(80))
+                    .unwrap();
+            }
+            false => {
+                let ext = args.out_path.extension().unwrap().to_str().unwrap();
+                img.name = args.out_path.file_stem().unwrap().to_str().unwrap().into();
+                img.path = args.out_path.parent().unwrap().to_str().unwrap().into();
+                match ext {
+                    "png" | "PNG" => {
+                        lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Png)
+                            .unwrap();
+                    }
+                    _ => {
+                        lenna_core::io::write::write_to_file(
+                            &img,
+                            image::ImageOutputFormat::Jpeg(80),
+                        )
+                        .unwrap();
+                    }
+                }
+            }
+        };
     }
 }
