@@ -15,9 +15,15 @@ path = "src/bin/bin.rs"
 
 [dependencies]
 libloading = "0.5"
-structopt = "0.3.13"
+structopt = "0.3"
 lenna_core = {git = "https://github.com/lenna-project/lenna-core", branch="main" }
 image = { version = "0.23.12", default-features = false, features = ["png"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.8"
+zip = "0.5.12"
+
+[target.wasm32-unknown-unknown.dependencies]
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen-futures = { version = "0.4.23" }
+js-sys = "0.3.50"

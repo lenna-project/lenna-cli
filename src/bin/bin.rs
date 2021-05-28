@@ -1,4 +1,4 @@
-use lenna_cli::plugins;
+use lenna_cli::{plugins, zip_images};
 use lenna_core::{Config, Pipeline};
 use structopt::StructOpt;
 
@@ -72,6 +72,18 @@ fn main() {
                 img.name = args.out_path.file_stem().unwrap().to_str().unwrap().into();
                 img.path = args.out_path.parent().unwrap().to_str().unwrap().into();
                 match ext {
+                    "zip" => {
+                        img.name = format!("{}.jpg", img.name);
+                        let images = vec![&mut img];
+                        let file = std::fs::File::create(&args.out_path).unwrap();
+                        zip_images(
+                            images,
+                            image::ImageOutputFormat::Jpeg(80),
+                            file,
+                            zip::CompressionMethod::DEFLATE,
+                        )
+                        .unwrap();
+                    }
                     "png" | "PNG" => {
                         lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Png)
                             .unwrap();
