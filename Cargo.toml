@@ -4,7 +4,14 @@ version = "0.1.0"
 authors = ["Christian <chriamue@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "lenna_cli"
+path = "src/lib.rs"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "lenna-cli"
+path = "src/bin/bin.rs"
 
 [dependencies]
 libloading = "0.5"

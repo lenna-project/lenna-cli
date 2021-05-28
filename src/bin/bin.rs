@@ -1,7 +1,6 @@
+use lenna_cli::plugins;
 use lenna_core::{Config, Pipeline};
 use structopt::StructOpt;
-
-mod plugins;
 
 #[derive(StructOpt)]
 #[structopt(name = "lenna-cli", about = "Command Line Interface for Lenna")]

@@ -7,3 +7,5 @@ pipeline:
     high: 100.0
   - id: blur
     sigma: 1.5
+  - id: exif-thumbnail
+    thumbnail: true
