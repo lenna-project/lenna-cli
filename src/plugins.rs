@@ -1,3 +1,5 @@
+#![cfg(not(target_arch = "wasm32"))]
+#![cfg(feature = "libloading")]
 use lenna_core::plugins::PluginDeclaration;
 use lenna_core::{ExifProcessor, ImageProcessor, Pool, Processor, ProcessorConfig};
 use libloading::Library;

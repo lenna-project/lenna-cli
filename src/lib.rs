@@ -4,6 +4,7 @@ use std::path::Path;
 use zip::write::FileOptions;
 
 pub mod plugins;
+mod wasm;
 
 pub fn zip_images<T>(
     images: Vec<&mut Box<lenna_core::LennaImage>>,
