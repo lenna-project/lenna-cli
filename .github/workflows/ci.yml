@@ -1,0 +1,23 @@
+on: [push]
+
+name: CI
+
+jobs:
+  build_and_deploy:
+    name: Rust project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: 'latest'
+      - run: wasm-pack build --release --target web
+      - run: rm pkg/.gitignore
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@4.1.3
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: pkg # The folder the action should deploy.

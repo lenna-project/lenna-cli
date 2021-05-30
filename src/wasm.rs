@@ -2,7 +2,7 @@
 use image;
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen(js_name = process)]
+#[wasm_bindgen(js_name = convert)]
 pub fn convert(data: &[u8], format: String) -> Vec<u8> {
     use console_error_panic_hook;
     console_error_panic_hook::set_once();
