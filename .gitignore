@@ -1,4 +1,6 @@
 /target
 /plugins
 /output
+/dist
+/node_modules
 lenna_out.png

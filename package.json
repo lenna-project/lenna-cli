@@ -1,0 +1,27 @@
+{
+  "name": "@lenna-project/lenna-cli",
+  "version": "0.1.0",
+  "description": "",
+  "scripts": {
+    "start": "webpack-cli serve",
+    "serve": "serve dist -p 3002",
+    "build": "webpack --mode production --env prod=true",
+    "clean": "rm -rf dist"
+  },
+  "config": {
+    "shortname": "lenna_cli",
+    "publicPath": "https://lenna.app/lenna-cli/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serve": "^11.3.2"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.3.1",
+    "webpack": "^5.33.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
+  }
+}
