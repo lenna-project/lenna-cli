@@ -1,0 +1,1 @@
+{"version":3,"sources":["webpack://@lenna-project/lenna-cli/./src/index.js"],"names":[],"mappings":";;;;;;;;;;AAAO;AACP,SAAS,kGAAgB;AACzB","file":"138.js","sourcesContent":["export const save = async (image, format) => {\n  return import('../pkg').then(converter => converter.convert(image, format));\n};\n"],"sourceRoot":""}
