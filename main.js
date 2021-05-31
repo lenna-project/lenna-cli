@@ -162,7 +162,7 @@ const save = async (image, format) => {
 /******/ 	
 /******/ 	/* webpack/runtime/publicPath */
 /******/ 	(() => {
-/******/ 		__webpack_require__.p = "https://lenna.app/lenna-plugins/lenna-cli/";
+/******/ 		__webpack_require__.p = "https://lenna.app/lenna-cli/";
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/jsonp chunk loading */
