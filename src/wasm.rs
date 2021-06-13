@@ -12,6 +12,9 @@ pub fn convert(data: &[u8], format: String) -> Vec<u8> {
     let format: image::ImageOutputFormat = match format {
         "jpg" => image::ImageOutputFormat::Jpeg(90),
         "png" => image::ImageOutputFormat::Png,
+        "ico" => image::ImageOutputFormat::Ico,
+        "bmp" => image::ImageOutputFormat::Bmp,
+        "gif" => image::ImageOutputFormat::Gif,
         _ => image::ImageOutputFormat::Jpeg(90),
     };
     let out_data = lenna_core::io::write::write_to_data(&img, format).unwrap();
