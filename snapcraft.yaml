@@ -1,0 +1,20 @@
+name: lenna-cli
+version: git
+summary: This is the Command Line Interface for Lenna.
+description: |
+  lenna-cli is a command line program for converting images.
+confinement: devmode
+base: core20
+license: MIT
+
+parts:
+  lenna-cli:
+    plugin: rust
+    source: .
+    rust-features:
+      - libloading
+
+apps:
+  lenna-cli:
+    command: bin/lenna-cli
+    plugs: [home, removable-media]
