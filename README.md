@@ -54,6 +54,7 @@ Install using snapcraft.
 snapcraft
 sudo snap install lenna-cli_*.snap --devmode --dangerous
 lenna-cli --help
+lenna-cli lenna.png --config lenna.yml --output out.png --plugins /snap/lenna-cli/current/plugins
 ```
 
 ## 📜 License

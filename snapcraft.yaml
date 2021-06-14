@@ -14,7 +14,17 @@ parts:
     rust-features:
       - libloading
 
+  lenna-plugins:
+    plugin: rust
+    source: https://github.com/lenna-project/lenna-plugins.git
+    override-build: |
+       cargo build --all --release
+       mkdir $SNAPCRAFT_PART_INSTALL/plugins
+       cp target/release/lib*.so $SNAPCRAFT_PART_INSTALL/plugins/
+
 apps:
   lenna-cli:
     command: bin/lenna-cli
     plugs: [home, removable-media]
+    environment:
+      LENNA_PLUGINS: $SNAP/plugins
