@@ -41,7 +41,7 @@ Id is the plugin, the other attributes are the parameter for the plugin.
 ## 👻 run
 
 ```bash
-cargo run -- lenna.png -o lenna_out.png -c lenna.yml -p plugins/
+cargo run --features="libloading" -- lenna.png -o lenna_out.png -c lenna.yml
 ```
 
 ![Run](docs/images/run.gif)

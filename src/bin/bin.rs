@@ -1,6 +1,7 @@
 use lenna_cli::{plugins, zip_images};
 use lenna_core::{Config, Pipeline};
 use structopt::StructOpt;
+use std::env;
 
 #[derive(StructOpt)]
 #[structopt(name = "lenna-cli", about = "Command Line Interface for Lenna")]
@@ -25,9 +26,8 @@ struct Cli {
         parse(from_os_str),
         short = "p",
         long = "plugins",
-        default_value = "plugins/"
     )]
-    plugins: std::path::PathBuf,
+    plugins: Option<std::path::PathBuf>,
     #[structopt(long = "list-plugins")]
     list_plugins: bool,
     #[structopt(short, long)]
@@ -39,7 +39,15 @@ fn main() {
     let config_file = std::fs::File::open(&args.config).unwrap();
     let config: Config = serde_yaml::from_reader(config_file).unwrap();
     let mut plugins = plugins::Plugins::new();
-    plugins.load_plugins(&args.plugins);
+    let plugins_path = match args.plugins {
+        Some(path) => path,
+        None => match env::var("LENNA_PLUGINS") {
+            Ok(val) => std::path::PathBuf::from(val),
+            _ => std::path::PathBuf::from("plugins/")
+        }
+    };
+
+    plugins.load_plugins(&plugins_path);
 
     if args.list_plugins {
         for plugin_id in plugins.pool.ids() {
