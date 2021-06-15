@@ -1,8 +1,12 @@
 # lenna-cli
 
+[![lenna-cli](https://snapcraft.io/lenna-cli/badge.svg)](https://snapcraft.io/lenna-cli)
+
 Lenna is a library for image processing algorithms and apps.
 
 This is the Command Line Interface for Lenna.
+
+[![asciicast](https://asciinema.org/a/420516.svg)](https://asciinema.org/a/420516)
 
 ## 🐰 quickstart
 
