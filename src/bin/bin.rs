@@ -1,7 +1,7 @@
 use lenna_cli::{plugins, zip_images};
 use lenna_core::{Config, Pipeline};
-use structopt::StructOpt;
 use std::env;
+use structopt::StructOpt;
 
 #[derive(StructOpt)]
 #[structopt(name = "lenna-cli", about = "Command Line Interface for Lenna")]
@@ -13,7 +13,11 @@ struct Cli {
         default_value = "lenna.yml"
     )]
     config: std::path::PathBuf,
-    #[structopt(parse(from_os_str), required_unless = "list-plugins")]
+    #[structopt(
+        parse(from_os_str),
+        required_unless = "list-plugins",
+        required_unless = "example-config"
+    )]
     path: Option<std::path::PathBuf>,
     #[structopt(
         parse(from_os_str),
@@ -22,16 +26,14 @@ struct Cli {
         default_value = "output"
     )]
     out_path: std::path::PathBuf,
-    #[structopt(
-        parse(from_os_str),
-        short = "p",
-        long = "plugins",
-    )]
+    #[structopt(parse(from_os_str), short = "p", long = "plugins")]
     plugins: Option<std::path::PathBuf>,
     #[structopt(long = "list-plugins")]
     list_plugins: bool,
     #[structopt(short, long)]
     verbose: bool,
+    #[structopt(long = "example-config")]
+    example_config: bool,
 }
 
 fn main() {
@@ -43,8 +45,8 @@ fn main() {
         Some(path) => path,
         None => match env::var("LENNA_PLUGINS") {
             Ok(val) => std::path::PathBuf::from(val),
-            _ => std::path::PathBuf::from("plugins/")
-        }
+            _ => std::path::PathBuf::from("plugins/"),
+        },
     };
 
     plugins.load_plugins(&plugins_path);
@@ -59,6 +61,9 @@ fn main() {
                 }
             }
         }
+    } else if args.example_config {
+        let lenna_yml = include_str!("../../lenna.yml");
+        print!("{}", lenna_yml);
     } else {
         let path = &args.path.unwrap();
         let mut img = Box::new(
