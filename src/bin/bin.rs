@@ -1,6 +1,8 @@
 use lenna_cli::{plugins, zip_images};
 use lenna_core::{Config, Pipeline};
 use std::env;
+use std::fs;
+use std::path::{Path, PathBuf};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -36,6 +38,25 @@ struct Cli {
     example_config: bool,
 }
 
+fn images_in_path(path: &PathBuf) -> Vec<PathBuf> {
+    let mut images: Vec<PathBuf> = Vec::new();
+    let path = Path::new(path);
+    match path.is_dir() {
+        true => {
+            for entry in fs::read_dir(path).unwrap() {
+                let entry = entry.unwrap();
+                let path = entry.path();
+                if path.is_dir() {
+                } else {
+                    images.push(path);
+                }
+            }
+        }
+        false => images.push(path.into()),
+    }
+    images
+}
+
 fn main() {
     let args = Cli::from_args();
     let config_file = std::fs::File::open(&args.config).unwrap();
@@ -65,51 +86,58 @@ fn main() {
         let lenna_yml = include_str!("../../lenna.yml");
         print!("{}", lenna_yml);
     } else {
-        let path = &args.path.unwrap();
-        let mut img = Box::new(
-            lenna_core::io::read::read_from_file(path.to_str().unwrap().to_string()).unwrap(),
-        );
-
         let pipeline = Pipeline::new(config, plugins.pool);
-        pipeline.run(&mut img).unwrap();
-
-        let out_path = args.out_path.to_str().unwrap().to_string();
-        match args.out_path.is_dir() {
-            true => {
-                img.path = out_path;
-                lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Jpeg(80))
-                    .unwrap();
+        let path = &args.path.unwrap();
+        for path in images_in_path(path) {
+            if args.verbose {
+                println!("{}", path.to_str().unwrap());
             }
-            false => {
-                let ext = args.out_path.extension().unwrap().to_str().unwrap();
-                img.name = args.out_path.file_stem().unwrap().to_str().unwrap().into();
-                img.path = args.out_path.parent().unwrap().to_str().unwrap().into();
-                match ext {
-                    "zip" => {
-                        img.name = format!("{}.jpg", img.name);
-                        let images = vec![&mut img];
-                        let file = std::fs::File::create(&args.out_path).unwrap();
-                        zip_images(
-                            images,
-                            image::ImageOutputFormat::Jpeg(80),
-                            file,
-                            zip::CompressionMethod::DEFLATE,
-                        )
+            let mut img = Box::new(
+                lenna_core::io::read::read_from_file(path.to_str().unwrap().to_string()).unwrap(),
+            );
+            pipeline.run(&mut img).unwrap();
+
+            let out_path = args.out_path.to_str().unwrap().to_string();
+            match args.out_path.is_dir() {
+                true => {
+                    img.path = out_path;
+                    lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Jpeg(80))
                         .unwrap();
-                    }
-                    "png" | "PNG" => {
-                        lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Png)
+                }
+                false => {
+                    let ext = args.out_path.extension().unwrap().to_str().unwrap();
+                    img.name = args.out_path.file_stem().unwrap().to_str().unwrap().into();
+                    img.path = args.out_path.parent().unwrap().to_str().unwrap().into();
+                    match ext {
+                        "zip" => {
+                            img.name = format!("{}.jpg", img.name);
+                            let images = vec![&mut img];
+                            let file = std::fs::File::create(&args.out_path).unwrap();
+                            zip_images(
+                                images,
+                                image::ImageOutputFormat::Jpeg(80),
+                                file,
+                                zip::CompressionMethod::DEFLATE,
+                            )
                             .unwrap();
-                    }
-                    _ => {
-                        lenna_core::io::write::write_to_file(
-                            &img,
-                            image::ImageOutputFormat::Jpeg(80),
-                        )
-                        .unwrap();
+                        }
+                        "png" | "PNG" => {
+                            lenna_core::io::write::write_to_file(
+                                &img,
+                                image::ImageOutputFormat::Png,
+                            )
+                            .unwrap();
+                        }
+                        _ => {
+                            lenna_core::io::write::write_to_file(
+                                &img,
+                                image::ImageOutputFormat::Jpeg(80),
+                            )
+                            .unwrap();
+                        }
                     }
                 }
-            }
-        };
+            };
+        }
     }
 }
