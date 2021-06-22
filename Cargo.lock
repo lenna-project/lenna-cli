@@ -243,7 +243,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
-name = "lenna-cli"
+name = "lenna_cli"
 version = "0.1.0"
 dependencies = [
  "console_error_panic_hook",
@@ -262,8 +262,9 @@ dependencies = [
 
 [[package]]
 name = "lenna_core"
-version = "0.1.0"
-source = "git+https://github.com/lenna-project/lenna-core?branch=main#b693561a4987f95f342ab5b6b216a070d99f092e"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9559c803cd7bd9d33b5caeea5984d086cf6c6316a46e7881d9146bc426a56b27"
 dependencies = [
  "console_error_panic_hook",
  "dyn-clone",

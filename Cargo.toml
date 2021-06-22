@@ -1,8 +1,16 @@
 [package]
-name = "lenna-cli"
+name = "lenna_cli"
 version = "0.1.0"
 authors = ["Christian <chriamue@gmail.com>"]
+description = "Command line interface to run algorithms on images."
 edition = "2018"
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/lenna-project/lenna-cli"
+homepage = "https://lenna.app"
+documentation = "https://docs.rs/lenna_cli"
+keywords = ["cli", "image-processing"]
+categories = ["multimedia::images", "wasm", "graphics"]
 
 [lib]
 name = "lenna_cli"
@@ -20,7 +28,7 @@ default = []
 [dependencies]
 libloading = {version = "0.5", optional = true }
 structopt = "0.3"
-lenna_core = {git = "https://github.com/lenna-project/lenna-core", branch="main" }
+lenna_core = "0.1"
 image = { version = "0.23", default-features = false, features = ["png", "jpeg", "ico", "gif"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
