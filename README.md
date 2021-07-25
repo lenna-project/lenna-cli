@@ -1,6 +1,7 @@
 # lenna-cli
 [![lenna-cli](https://snapcraft.io/lenna-cli/badge.svg)](https://snapcraft.io/lenna-cli)
 [![Crates.io](https://img.shields.io/crates/v/lenna_cli)](https://crates.io/crates/lenna_cli)
+[![dependency status](https://deps.rs/repo/github/lenna-project/lenna-cli/status.svg)](https://deps.rs/repo/github/lenna-project/lenna-cli)
 
 Lenna is a library for image processing algorithms and apps.
 

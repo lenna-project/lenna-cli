@@ -102,11 +102,11 @@ impl Plugins {
 
     pub unsafe fn load<P: AsRef<OsStr>>(&mut self, library_path: P) -> io::Result<()> {
         // load the library into memory
-        let library = Rc::new(Library::new(library_path)?);
+        let library = Rc::new(Library::new(library_path).unwrap());
 
         // get a pointer to the plugin_declaration symbol.
         let decl = library
-            .get::<*mut PluginDeclaration>(b"plugin_declaration\0")?
+            .get::<*mut PluginDeclaration>(b"plugin_declaration\0").unwrap()
             .read();
 
         // version checks to prevent accidental ABI incompatibilities
