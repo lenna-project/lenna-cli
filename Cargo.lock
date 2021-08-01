@@ -309,8 +309,7 @@ dependencies = [
 [[package]]
 name = "lenna_core"
 version = "0.1.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d645c2fff1fd963932ab32326ca2bf5beec7d3304f2887744eec02d529717792"
+source = "git+https://github.com/lenna-project/lenna-core?branch=main#cd3f329add3479b75b0d109bf96c8c8d4a81a4b2"
 dependencies = [
  "base64",
  "cbindgen",

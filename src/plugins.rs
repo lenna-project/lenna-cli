@@ -106,7 +106,8 @@ impl Plugins {
 
         // get a pointer to the plugin_declaration symbol.
         let decl = library
-            .get::<*mut PluginDeclaration>(b"plugin_declaration\0").unwrap()
+            .get::<*mut PluginDeclaration>(b"plugin_declaration\0")
+            .unwrap()
             .read();
 
         // version checks to prevent accidental ABI incompatibilities
@@ -126,5 +127,24 @@ impl Plugins {
         //self.plugins.extend(registrar.plugins);
         self.libraries.push(library);
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn default() {
+        let plugins = Plugins::new();
+        assert_eq!(plugins.pool.ids().len(), 1);
+    }
+
+    #[test]
+    fn load_path() {
+        let mut plugins = Plugins::new();
+        let path = std::path::PathBuf::from("plugins/");
+        plugins.load_plugins(&path);
+        assert_eq!(plugins.pool.ids().len(), 1);
     }
 }
