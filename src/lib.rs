@@ -1,6 +1,7 @@
 use lenna_core::io::write::write_to_data;
 use std::io::{Seek, Write};
-use std::path::Path;
+use std::fs;
+use std::path::{Path, PathBuf};
 use zip::write::FileOptions;
 
 pub mod plugins;
@@ -31,4 +32,23 @@ where
     }
     zip.finish()?;
     Result::Ok(())
+}
+
+pub fn images_in_path(path: &PathBuf) -> Vec<PathBuf> {
+    let mut images: Vec<PathBuf> = Vec::new();
+    let path = Path::new(path);
+    match path.is_dir() {
+        true => {
+            for entry in fs::read_dir(path).unwrap() {
+                let entry = entry.unwrap();
+                let path = entry.path();
+                if path.is_dir() {
+                } else {
+                    images.push(path);
+                }
+            }
+        }
+        false => images.push(path.into()),
+    }
+    images
 }

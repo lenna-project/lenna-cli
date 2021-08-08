@@ -1,8 +1,6 @@
-use lenna_cli::{plugins, zip_images};
+use lenna_cli::{plugins, zip_images, images_in_path};
 use lenna_core::{Config, Pipeline};
 use std::env;
-use std::fs;
-use std::path::{Path, PathBuf};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -38,24 +36,7 @@ struct Cli {
     example_config: bool,
 }
 
-fn images_in_path(path: &PathBuf) -> Vec<PathBuf> {
-    let mut images: Vec<PathBuf> = Vec::new();
-    let path = Path::new(path);
-    match path.is_dir() {
-        true => {
-            for entry in fs::read_dir(path).unwrap() {
-                let entry = entry.unwrap();
-                let path = entry.path();
-                if path.is_dir() {
-                } else {
-                    images.push(path);
-                }
-            }
-        }
-        false => images.push(path.into()),
-    }
-    images
-}
+
 
 fn main() {
     let args = Cli::from_args();
