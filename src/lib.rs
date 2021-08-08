@@ -1,4 +1,5 @@
 use lenna_core::io::write::write_to_data;
+use lenna_core::LennaImage;
 use std::fs;
 use std::io::{Seek, Write};
 use std::path::{Path, PathBuf};
@@ -51,4 +52,29 @@ pub fn images_in_path(path: &PathBuf) -> Vec<PathBuf> {
         false => images.push(path.into()),
     }
     images
+}
+
+pub fn write_to_path(mut img: Box<LennaImage>, path: String, ext: String) {
+    let ext = ext.as_str();
+    img.path = path.clone();
+    match ext {
+        "zip" => {
+            img.name = format!("{}.jpg", img.name);
+            let images = vec![&mut img];
+            let file = std::fs::File::create(&path).unwrap();
+            zip_images(
+                images,
+                image::ImageOutputFormat::Jpeg(80),
+                file,
+                zip::CompressionMethod::DEFLATE,
+            )
+            .unwrap();
+        }
+        "png" | "PNG" => {
+            lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Png).unwrap();
+        }
+        _ => {
+            lenna_core::io::write::write_to_file(&img, image::ImageOutputFormat::Jpeg(80)).unwrap();
+        }
+    }
 }
