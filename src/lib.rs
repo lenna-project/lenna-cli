@@ -1,6 +1,6 @@
 use lenna_core::io::write::write_to_data;
-use std::io::{Seek, Write};
 use std::fs;
+use std::io::{Seek, Write};
 use std::path::{Path, PathBuf};
 use zip::write::FileOptions;
 

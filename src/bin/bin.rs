@@ -1,4 +1,4 @@
-use lenna_cli::{plugins, zip_images, images_in_path};
+use lenna_cli::{images_in_path, plugins, zip_images};
 use lenna_core::{Config, Pipeline};
 use std::env;
 use structopt::StructOpt;
@@ -35,8 +35,6 @@ struct Cli {
     #[structopt(long = "example-config")]
     example_config: bool,
 }
-
-
 
 fn main() {
     let args = Cli::from_args();

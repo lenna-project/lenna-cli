@@ -84,20 +84,29 @@ impl Plugins {
 
     pub fn load_plugins(&mut self, plugins_path: &PathBuf) {
         let extensions = ["so", "dll", "dylib"];
-        let paths = fs::read_dir(plugins_path).unwrap();
-
-        for library_path in paths {
-            let file = library_path.unwrap().path();
-            let extension = &file.extension();
-            if extensions.contains(&extension.unwrap().to_str().unwrap()) {
-                unsafe {
-                    match self.load(file) {
-                        Ok(_) => (),
-                        Err(e) => println!("{:?}", e),
+        let paths = fs::read_dir(plugins_path);
+        match paths {
+            Ok(paths) => {
+                for library_path in paths {
+                    match library_path {
+                        Ok(path) => {
+                            let file = path.path();
+                            let extension = &file.extension();
+                            if extensions.contains(&extension.unwrap().to_str().unwrap()) {
+                                unsafe {
+                                    match self.load(file) {
+                                        Ok(_) => (),
+                                        Err(e) => println!("{:?}", e),
+                                    }
+                                }
+                            }
+                        }
+                        Err(err) => println!("{:?}", err),
                     }
                 }
             }
-        }
+            Err(err) => println!("{:?}", err),
+        };
     }
 
     pub unsafe fn load<P: AsRef<OsStr>>(&mut self, library_path: P) -> io::Result<()> {
@@ -144,6 +153,14 @@ mod tests {
     fn load_path() {
         let mut plugins = Plugins::new();
         let path = std::path::PathBuf::from("plugins/");
+        plugins.load_plugins(&path);
+        assert_eq!(plugins.pool.ids().len(), 1);
+    }
+
+    #[test]
+    fn load_non_existend_path() {
+        let mut plugins = Plugins::new();
+        let path = std::path::PathBuf::from("pluginss/");
         plugins.load_plugins(&path);
         assert_eq!(plugins.pool.ids().len(), 1);
     }
