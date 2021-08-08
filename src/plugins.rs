@@ -92,13 +92,18 @@ impl Plugins {
                         Ok(path) => {
                             let file = path.path();
                             let extension = &file.extension();
-                            if extensions.contains(&extension.unwrap().to_str().unwrap()) {
-                                unsafe {
-                                    match self.load(file) {
-                                        Ok(_) => (),
-                                        Err(e) => println!("{:?}", e),
+                            match extension {
+                                Some(extension) => {
+                                    if extensions.contains(&extension.to_str().unwrap()) {
+                                        unsafe {
+                                            match self.load(file) {
+                                                Ok(_) => (),
+                                                Err(e) => println!("{:?}", e),
+                                            }
+                                        }
                                     }
                                 }
+                                _ => (),
                             }
                         }
                         Err(err) => println!("{:?}", err),
