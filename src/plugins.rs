@@ -42,8 +42,17 @@ impl Processor for PluginProxy {
         self.processor.process(config, image)
     }
 
+    fn set_config(&mut self, config: serde_json::Value) {
+        self.processor.set_config(config)
+    }
     fn default_config(&self) -> serde_json::Value {
         self.processor.default_config()
+    }
+    fn config_ui(&self) -> Option<String> {
+        self.processor.config_ui()
+    }
+    fn icon(&self) -> Option<Vec<u8>> {
+        self.processor.icon()
     }
 }
 
@@ -168,5 +177,22 @@ mod tests {
         let path = std::path::PathBuf::from("pluginss/");
         plugins.load_plugins(&path);
         assert_eq!(plugins.pool.ids().len(), 1);
+    }
+
+    #[test]
+    fn proxy() {
+        let plugins = Plugins::new();
+        let processor = plugins.pool.get("resize").unwrap();
+        unsafe {
+            let library = Rc::new(Library::new("").unwrap());
+
+            let proxy = PluginProxy {
+                processor,
+                _lib: library,
+            };
+
+            assert!(proxy.icon().is_some());
+            assert_eq!(proxy.icon().unwrap().len(), 36408);
+        }
     }
 }

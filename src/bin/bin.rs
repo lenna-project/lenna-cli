@@ -1,4 +1,4 @@
-use lenna_cli::{images_in_path, write_to_path, plugins};
+use lenna_cli::{images_in_path, plugins, write_to_path};
 use lenna_core::{Config, Pipeline};
 use std::env;
 use structopt::StructOpt;
