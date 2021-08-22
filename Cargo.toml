@@ -24,12 +24,14 @@ required-features = ["libloading"]
 
 [features]
 default = []
+python = ["libloading", "lenna_core/python", "pyo3"]
 
 [dependencies]
 libloading = {version = "0.7", optional = true }
 structopt = "0.3"
 lenna_core = { version = "0.1", git = "https://github.com/lenna-project/lenna-core", branch = "main" }
 image = { version = "0.23.14", default-features = false, features = ["png", "jpeg", "ico", "gif"] }
+pyo3 = { version = "0.14", features = ["extension-module"], optional = true }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_yaml = "0.8.17"
@@ -40,3 +42,7 @@ wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
 wasm-bindgen-futures = { version = "0.4.23" }
 js-sys = "0.3.50"
 console_error_panic_hook = "0.1"
+
+[package.metadata.maturin]
+classifiers = ["Programming Language :: Python"]
+requires-dist = ["numpy"]

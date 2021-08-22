@@ -3,12 +3,12 @@
 use lenna_core::plugins::PluginDeclaration;
 use lenna_core::{ExifProcessor, ImageProcessor, Pool, Processor, ProcessorConfig};
 use libloading::Library;
-use std::{ffi::OsStr, fs, io, path::PathBuf, rc::Rc};
+use std::{ffi::OsStr, fs, io, path::PathBuf, sync::Arc};
 
 #[derive(Clone)]
 pub struct PluginProxy {
     processor: Box<dyn Processor>,
-    _lib: Rc<Library>,
+    _lib: Arc<Library>,
 }
 
 impl ImageProcessor for PluginProxy {}
@@ -58,11 +58,11 @@ impl Processor for PluginProxy {
 
 struct PluginRegistrar {
     plugins: Vec<PluginProxy>,
-    lib: Rc<Library>,
+    lib: Arc<Library>,
 }
 
 impl PluginRegistrar {
-    fn new(lib: Rc<Library>) -> PluginRegistrar {
+    fn new(lib: Arc<Library>) -> PluginRegistrar {
         PluginRegistrar {
             lib,
             plugins: Vec::default(),
@@ -74,7 +74,7 @@ impl lenna_core::plugins::PluginRegistrar for PluginRegistrar {
     fn add_plugin(&mut self, processor: Box<dyn Processor>) {
         let proxy = PluginProxy {
             processor,
-            _lib: Rc::clone(&self.lib),
+            _lib: Arc::clone(&self.lib),
         };
         self.plugins.push(proxy);
     }
@@ -83,7 +83,7 @@ impl lenna_core::plugins::PluginRegistrar for PluginRegistrar {
 #[derive(Default)]
 pub struct Plugins {
     pub pool: Pool,
-    libraries: Vec<Rc<Library>>,
+    libraries: Vec<Arc<Library>>,
 }
 
 impl Plugins {
@@ -125,30 +125,36 @@ impl Plugins {
 
     pub unsafe fn load<P: AsRef<OsStr>>(&mut self, library_path: P) -> io::Result<()> {
         // load the library into memory
-        let library = Rc::new(Library::new(library_path).unwrap());
+        match Library::new(library_path) {
+            Ok(library) => {
+                let library = Arc::new(library);
 
-        // get a pointer to the plugin_declaration symbol.
-        let decl = library
-            .get::<*mut PluginDeclaration>(b"plugin_declaration\0")
-            .unwrap()
-            .read();
+                // get a pointer to the plugin_declaration symbol.
+                let decl = library
+                    .get::<*mut PluginDeclaration>(b"plugin_declaration\0")
+                    .unwrap()
+                    .read();
 
-        // version checks to prevent accidental ABI incompatibilities
-        if decl.rustc_version != lenna_core::RUSTC_VERSION
-            || decl.core_version != lenna_core::CORE_VERSION
-        {
-            return Err(io::Error::new(io::ErrorKind::Other, "Version mismatch"));
+                // version checks to prevent accidental ABI incompatibilities
+                if decl.rustc_version != lenna_core::RUSTC_VERSION
+                    || decl.core_version != lenna_core::CORE_VERSION
+                {
+                    return Err(io::Error::new(io::ErrorKind::Other, "Version mismatch"));
+                }
+
+                let mut registrar = PluginRegistrar::new(Arc::clone(&library));
+
+                (decl.register)(&mut registrar);
+
+                let plugin = registrar.plugins.swap_remove(0);
+                self.pool.add(Box::new(plugin));
+
+                //self.plugins.extend(registrar.plugins);
+                self.libraries.push(library);
+            }
+            _ => {}
         }
 
-        let mut registrar = PluginRegistrar::new(Rc::clone(&library));
-
-        (decl.register)(&mut registrar);
-
-        let plugin = registrar.plugins.swap_remove(0);
-        self.pool.add(Box::new(plugin));
-
-        //self.plugins.extend(registrar.plugins);
-        self.libraries.push(library);
         Ok(())
     }
 }
@@ -156,6 +162,7 @@ impl Plugins {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use libloading::library_filename;
 
     #[test]
     fn default() {
@@ -184,7 +191,7 @@ mod tests {
         let plugins = Plugins::new();
         let processor = plugins.pool.get("resize").unwrap();
         unsafe {
-            let library = Rc::new(Library::new("").unwrap());
+            let library = Arc::new(Library::new(library_filename("LLVM")).unwrap());
 
             let proxy = PluginProxy {
                 processor,

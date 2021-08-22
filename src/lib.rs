@@ -8,6 +8,9 @@ use zip::write::FileOptions;
 pub mod plugins;
 mod wasm;
 
+#[cfg(feature = "python")]
+pub mod python;
+
 pub fn zip_images<T>(
     images: Vec<&mut Box<lenna_core::LennaImage>>,
     format: image::ImageOutputFormat,
