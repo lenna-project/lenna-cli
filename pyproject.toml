@@ -1,0 +1,8 @@
+[build-system]
+requires = ["maturin>=0.10,<0.11"]
+build-backend = "maturin"
+
+[tool.maturin]
+bindings = "pyo3"
+manylinux = "off"
+cargo-extra-args = "--features=python"

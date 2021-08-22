@@ -3,4 +3,5 @@
 /output
 /dist
 /node_modules
+.venv/
 lenna_out.png

@@ -53,7 +53,7 @@ cargo run --features="libloading" -- lenna.png -o lenna_out.png -c lenna.yml
 
 ![Run](docs/images/run.gif)
 
-## Install
+## install
 
 Install using snapcraft.
 
@@ -62,6 +62,23 @@ snapcraft
 sudo snap install lenna-cli_*.snap --devmode --dangerous
 lenna-cli --help
 lenna-cli lenna.png --config lenna.yml --output out.png --plugins /snap/lenna-cli/current/plugins
+```
+
+## 🐍 build python bindings
+
+Create a virtual environment for python and install lenna-cli using pip.
+
+```bash
+virtualenv -p python3 .venv
+source .venv/bin/activate
+pip install .
+python src/python/test.py
+```
+
+```python
+import lenna_cli
+lennaCli = lenna_cli.LennaCli()
+print(lennaCli.plugins())
 ```
 
 ## 📜 License

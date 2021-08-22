@@ -8,10 +8,21 @@ pub struct LennaCli {
     plugins: Plugins,
 }
 
+#[pymethods]
 impl LennaCli {
+
+    #[new]
+    fn new() -> Self {
+        LennaCli::default()
+    }
+
     pub fn load_plugins(&mut self, path: String) {
         let plugins_path = std::path::PathBuf::from(path);
         self.plugins.load_plugins(&plugins_path);
+    }
+
+    pub fn plugins(&self) -> Vec<String> {
+        self.plugins.pool.ids()
     }
 }
 
@@ -22,14 +33,13 @@ impl Default for LennaCli {
         }
     }
 }
-/*
+
 #[pymodule]
 pub fn lenna_cli(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<LennaCli>()?;
 
     Ok(())
 }
-*/
 
 #[cfg(test)]
 mod tests {
