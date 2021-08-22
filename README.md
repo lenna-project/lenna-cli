@@ -9,6 +9,8 @@ This is the Command Line Interface for [Lenna](https://lenna.app) based on [lenn
 
 [![asciicast](https://asciinema.org/a/420516.svg)](https://asciinema.org/a/420516)
 
+![Lenna CLI](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/lenna-project/lenna-cli/main/docs/uml/cli.puml)
+
 ## 🐰 quickstart
 
 ```bash

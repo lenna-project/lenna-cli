@@ -1,0 +1,11 @@
+@startuml cli
+folder Plugins
+folder Images
+folder OutputImages
+frame Config
+node LennaCLI
+Config -> LennaCLI
+LennaCLI <-> Plugins
+Images -> LennaCLI
+LennaCLI -> OutputImages
+@enduml
