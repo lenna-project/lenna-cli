@@ -81,6 +81,10 @@ lennaCli = lenna_cli.LennaCli()
 print(lennaCli.plugins())
 ```
 
+### jupyter
+
+You can test the python bindings in a [jupyter notebook](https://github.com/lenna-project/jupyter/blob/main/content/lenna-cli.ipynb).
+
 ## 📜 License
 
 This software is licensed under the [MIT](https://github.com/lenna-project/lenna-cli/blob/main/LICENSE) © [lenna-project](https://github.com/lenna-project).
