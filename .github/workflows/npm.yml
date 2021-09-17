@@ -1,0 +1,31 @@
+on: push
+
+name: Node.js Package
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - uses: jetli/wasm-pack-action@v0.3.0
+        with:
+          version: "latest"
+      - run: wasm-pack build
+
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+          # Defaults to the user or organization that owns the workflow file
+          scope: "@lenna-proj"
+          always-auth: true
+      - run: sed -i -e "s|\"lenna_cli\"|\"@lenna-proj/lenna-cli\"|g" pkg/package.json
+      - run: cd pkg && yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM }}
