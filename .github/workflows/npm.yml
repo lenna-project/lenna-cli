@@ -15,7 +15,7 @@ jobs:
       - uses: jetli/wasm-pack-action@v0.3.0
         with:
           version: "latest"
-      - run: wasm-pack build
+      - run: wasm-pack build --target nodejs
 
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v1

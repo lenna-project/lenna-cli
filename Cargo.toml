@@ -1,6 +1,6 @@
 [package]
 name = "lenna_cli"
-version = "0.1.7"
+version = "0.1.8"
 authors = ["Christian <chriamue@gmail.com>"]
 description = "Command line interface to run algorithms on images."
 edition = "2018"
