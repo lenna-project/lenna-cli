@@ -27,9 +27,9 @@ where
 
     for entry in images {
         let path = Path::new(&entry.name);
-        let name = path.strip_prefix(Path::new(&entry.path)).unwrap();
+        //let name = path.strip_prefix(Path::new(&entry.path)).unwrap();
         #[allow(deprecated)]
-        zip.start_file_from_path(name, options)?;
+        zip.start_file_from_path(path, options)?;
         let buffer = write_to_data(entry, format.clone()).unwrap();
 
         zip.write_all(&*buffer)?;
@@ -102,8 +102,13 @@ mod tests {
         let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
         image.name = "test".to_string();
         write_to_path(image, "./".to_string(), "jpg".to_string());
+        let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
+        image.name = "test".to_string();
+        write_to_path(image, "./test.zip".to_string(), "zip".to_string());
         let png_metadata = fs::metadata("test.png").unwrap();
         let jpg_metadata = fs::metadata("test.jpg").unwrap();
+        let zip_metadata = fs::metadata("test.zip").unwrap();
         assert!(png_metadata.len() > jpg_metadata.len());
+        assert!(png_metadata.len() > zip_metadata.len());
     }
 }
