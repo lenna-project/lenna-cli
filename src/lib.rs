@@ -81,3 +81,29 @@ pub fn write_to_path(mut img: Box<LennaImage>, path: String, ext: String) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use lenna_core::io::read::read_from_file;
+
+    #[test]
+    fn test_images_in_path() {
+        let path: PathBuf = [".", "lenna.png"].iter().collect();
+        let images = images_in_path(&path);
+        assert_eq!(images.len(), 1);
+    }
+
+    #[test]
+    fn test_write_to_path() {
+        let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
+        image.name = "test".to_string();
+        write_to_path(image, "./".to_string(), "png".to_string());
+        let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
+        image.name = "test".to_string();
+        write_to_path(image, "./".to_string(), "jpg".to_string());
+        let png_metadata = fs::metadata("test.png").unwrap();
+        let jpg_metadata = fs::metadata("test.jpg").unwrap();
+        assert!(png_metadata.len() > jpg_metadata.len());
+    }
+}
