@@ -11,6 +11,7 @@ mod wasm;
 #[cfg(feature = "python")]
 pub mod python;
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn zip_images<T>(
     images: Vec<&mut Box<lenna_core::LennaImage>>,
     format: image::ImageOutputFormat,
@@ -38,6 +39,7 @@ where
     Result::Ok(())
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn images_in_path(path: &PathBuf) -> Vec<PathBuf> {
     let mut images: Vec<PathBuf> = Vec::new();
     let path = Path::new(path);
@@ -57,6 +59,7 @@ pub fn images_in_path(path: &PathBuf) -> Vec<PathBuf> {
     images
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 pub fn write_to_path(mut img: Box<LennaImage>, path: String, ext: String) {
     let ext = ext.as_str();
     img.path = path.clone();
@@ -82,6 +85,7 @@ pub fn write_to_path(mut img: Box<LennaImage>, path: String, ext: String) {
     }
 }
 
+#[cfg(not(target_arch = "wasm32"))]
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -96,13 +100,13 @@ mod tests {
 
     #[test]
     fn test_write_to_path() {
-        let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
+        let mut image: Box<LennaImage> = Box::new(read_from_file("lenna.png".into()).unwrap());
         image.name = "test".to_string();
         write_to_path(image, "./".to_string(), "png".to_string());
-        let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
+        let mut image: Box<LennaImage> = Box::new(read_from_file("lenna.png".into()).unwrap());
         image.name = "test".to_string();
         write_to_path(image, "./".to_string(), "jpg".to_string());
-        let mut image = Box::new(read_from_file("lenna.png".into()).unwrap());
+        let mut image: Box<LennaImage> = Box::new(read_from_file("lenna.png".into()).unwrap());
         image.name = "test".to_string();
         write_to_path(image, "./test.zip".to_string(), "zip".to_string());
         let png_metadata = fs::metadata("test.png").unwrap();

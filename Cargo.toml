@@ -1,6 +1,6 @@
 [package]
 name = "lenna_cli"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Christian <chriamue@gmail.com>"]
 description = "Command line interface to run algorithms on images."
 edition = "2021"
@@ -63,3 +63,6 @@ console_error_panic_hook = "0.1"
 [package.metadata.maturin]
 classifiers = ["Programming Language :: Python"]
 requires-dist = ["numpy"]
+
+[target.wasm32-unknown-unknown.dev-dependencies]
+wasm-bindgen-test = "0.2"
