@@ -53,12 +53,12 @@ function takeObject(idx) {
     return ret;
 }
 
-let cachegetUint8Memory0 = null;
+let cachedUint8Memory0;
 function getUint8Memory0() {
-    if (cachegetUint8Memory0 === null || cachegetUint8Memory0.buffer !== _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer) {
-        cachegetUint8Memory0 = new Uint8Array(_lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer);
+    if (cachedUint8Memory0.byteLength === 0) {
+        cachedUint8Memory0 = new Uint8Array(_lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer);
     }
-    return cachegetUint8Memory0;
+    return cachedUint8Memory0;
 }
 
 let WASM_VECTOR_LEN = 0;
@@ -125,12 +125,12 @@ function passStringToWasm0(arg, malloc, realloc) {
     return ptr;
 }
 
-let cachegetInt32Memory0 = null;
+let cachedInt32Memory0;
 function getInt32Memory0() {
-    if (cachegetInt32Memory0 === null || cachegetInt32Memory0.buffer !== _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer) {
-        cachegetInt32Memory0 = new Int32Array(_lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer);
+    if (cachedInt32Memory0.byteLength === 0) {
+        cachedInt32Memory0 = new Int32Array(_lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer);
     }
-    return cachegetInt32Memory0;
+    return cachedInt32Memory0;
 }
 
 function getArrayU8FromWasm0(ptr, len) {
@@ -144,10 +144,10 @@ function getArrayU8FromWasm0(ptr, len) {
 function convert(data, format) {
     try {
         const retptr = _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_add_to_stack_pointer(-16);
-        var ptr0 = passArray8ToWasm0(data, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_malloc);
-        var len0 = WASM_VECTOR_LEN;
-        var ptr1 = passStringToWasm0(format, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_malloc, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_realloc);
-        var len1 = WASM_VECTOR_LEN;
+        const ptr0 = passArray8ToWasm0(data, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(format, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_malloc, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
         _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.convert(retptr, ptr0, len0, ptr1, len1);
         var r0 = getInt32Memory0()[retptr / 4 + 0];
         var r1 = getInt32Memory0()[retptr / 4 + 1];
@@ -179,14 +179,14 @@ function addHeapObject(obj) {
 }
 
 function __wbg_new_693216e109162396() {
-    var ret = new Error();
+    const ret = new Error();
     return addHeapObject(ret);
 };
 
 function __wbg_stack_0ddaca5d1abfb52f(arg0, arg1) {
-    var ret = getObject(arg1).stack;
-    var ptr0 = passStringToWasm0(ret, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_malloc, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_realloc);
-    var len0 = WASM_VECTOR_LEN;
+    const ret = getObject(arg1).stack;
+    const ptr0 = passStringToWasm0(ret, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_malloc, _lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.__wbindgen_realloc);
+    const len0 = WASM_VECTOR_LEN;
     getInt32Memory0()[arg0 / 4 + 1] = len0;
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
 };
@@ -202,6 +202,9 @@ function __wbg_error_09919627ac0992f5(arg0, arg1) {
 function __wbindgen_object_drop_ref(arg0) {
     takeObject(arg0);
 };
+
+cachedInt32Memory0 = new Int32Array(_lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer);
+cachedUint8Memory0 = new Uint8Array(_lenna_cli_bg_wasm__WEBPACK_IMPORTED_MODULE_0__.memory.buffer);
 
 
 
